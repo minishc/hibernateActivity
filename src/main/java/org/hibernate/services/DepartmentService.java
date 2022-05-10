@@ -1,43 +1,83 @@
 package org.hibernate.services;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.dao.DepartmentDAO;
 import org.hibernate.models.Department;
+import org.hibernate.util.HibernateUtility;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class DepartmentService implements DepartmentDAO {
 
     @Override
     public List<Department> getAllDepartments() {
-        List<Department> result = new ArrayList<>();
-       // SessionFactory session =
-        return null;
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        List<Department> departments = session.createQuery("FROM Department", Department.class).list();
+        session.close();
+        return departments;
     }
 
     @Override
-    public boolean addDepartment(Department dep) {
-        return false;
+    public boolean addDepartment(String name, String state) {
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        boolean result = false;
+        try {
+            Transaction transaction = session.beginTransaction();
+            Department department = new Department(name, state);
+            session.persist(department);
+            transaction.commit();
+            result = true;
+        }
+        catch(Exception exc) {
+            exc.printStackTrace();
+        }
+        session.close();
+        return result;
     }
 
     @Override
-    public boolean removeDepartment(int id) {
-        return false;
+    public Department removeDepartment(int id) {
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        Department department = null;
+        try {
+            Transaction transaction = session.beginTransaction();
+            department = session.get(Department.class, id);
+            if(department != null) {
+                session.remove(department);
+            }
+            transaction.commit();
+        }
+        catch(Exception exc) {
+            exc.printStackTrace();
+        }
+        session.close();
+        return department;
     }
 
     @Override
-    public boolean removeDepartment(Department dep) {
-        return false;
+    public Department removeDepartment(Department dep) {
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        Department department = dep;
+        try {
+            Transaction transaction = session.beginTransaction();
+            session.remove(department);
+            transaction.commit();
+        }
+        catch(Exception exc) {
+            exc.printStackTrace();
+            department = null;
+        }
+        session.close();
+        return department;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
+    public Department getDepartment(int id) {
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        Department department = session.get(Department.class, id);
+        session.close();
+        return department;
     }
 }

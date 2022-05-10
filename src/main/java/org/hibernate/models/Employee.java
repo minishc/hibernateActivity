@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NamedQuery(name = "getAllEmployees", query = "FROM Employee")
+@NamedQuery(name = "getEmployeeById", query = "FROM Employee WHERE id = :id")
 @Entity
 public class Employee {
     @Id
