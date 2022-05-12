@@ -29,8 +29,4 @@ public class HibernateUtility {
         }
         return sessionFactory;
     }
-
-    public static void close() {
-        sessionFactory.close();
-    }
 }
