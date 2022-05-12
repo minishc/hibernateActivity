@@ -1,14 +1,14 @@
 package org.hibernate.services;
 
+import lombok.extern.java.Log;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.dao.DepartmentDAO;
 import org.hibernate.models.Department;
 import org.hibernate.util.HibernateUtility;
 
-
 import java.util.List;
-
+@Log
 public class DepartmentService implements DepartmentDAO {
 
     @Override
@@ -31,7 +31,25 @@ public class DepartmentService implements DepartmentDAO {
             result = true;
         }
         catch(Exception exc) {
-            exc.printStackTrace();
+            result = false;
+            log.info(exc.toString());
+        }
+        session.close();
+        return result;
+    }
+
+    @Override
+    public boolean addDepartment(Department department) {
+        Session session = HibernateUtility.getSessionFactory().openSession();
+        boolean result = true;
+        try {
+            session.beginTransaction();
+            session.persist(department);
+            session.getTransaction().commit();
+            session.close();
+        }
+        catch(Exception exc) {
+            result = false;
         }
         session.close();
         return result;
@@ -44,33 +62,34 @@ public class DepartmentService implements DepartmentDAO {
         try {
             Transaction transaction = session.beginTransaction();
             department = session.get(Department.class, id);
-            if(department != null) {
-                session.remove(department);
-            }
+            session.remove(department);
             transaction.commit();
         }
         catch(Exception exc) {
-            exc.printStackTrace();
+            log.info(exc.toString());
+            throw exc;
         }
         session.close();
         return department;
     }
 
     @Override
-    public Department removeDepartment(Department dep) {
+    public boolean removeDepartment(Department dep) {
         Session session = HibernateUtility.getSessionFactory().openSession();
         Department department = dep;
+        boolean result = false;
         try {
             Transaction transaction = session.beginTransaction();
             session.remove(department);
             transaction.commit();
+            result = true;
         }
-        catch(Exception exc) {
-            exc.printStackTrace();
-            department = null;
+        catch (Exception exc) {
+            log.info(exc.toString());
+            throw exc;
         }
         session.close();
-        return department;
+        return result;
     }
 
     @Override
@@ -80,4 +99,5 @@ public class DepartmentService implements DepartmentDAO {
         session.close();
         return department;
     }
+
 }

@@ -14,7 +14,7 @@ public class HibernateUtility {
 
     public static void generateSessionFactory() {
         if(sessionFactory == null) {
-            Configuration cfg = new Configuration().configure(new File("src/main/resources/hibernate.cfg.xml"));
+            Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
             try {
                 sessionFactory = cfg.buildSessionFactory();
             } catch (Exception exc) {
