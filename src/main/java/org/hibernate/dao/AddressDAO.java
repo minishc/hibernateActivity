@@ -9,5 +9,5 @@ public interface AddressDAO {
     List<Address> getAllAddresses();
     Address getAddressById(int id);
     Address createAddress(String addr1, String addr2, String City, int zip, Employee employee);
-    Address createAddress(Address addr);
+    boolean createAddress(Address addr);
 }

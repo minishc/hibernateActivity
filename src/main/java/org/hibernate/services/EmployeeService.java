@@ -28,11 +28,6 @@ public class EmployeeService implements EmployeeDAO {
     }
 
     @Override
-    public Employee createEmployee(String name, double salary) {
-        return null;
-    }
-
-    @Override
     public Employee createEmployee(Employee employee) {
         Session session = HibernateUtility.getSessionFactory().openSession();
         session.beginTransaction();
